@@ -1,112 +1,56 @@
-# import cv2 as cv
-# import os 
-# from face_recognition.detect_faces import FaceDetector
-
-
-# # Why extract frames?
-
-# # The paper mentions that raw video must be split into individual frames for processing.
-# # Each frame becomes a separate sample for emotion recognition.
-# # Helps in tracking gestures, expressions, and deception patterns.
-
-# def preprocess_video(cap, file):
-#     # cap = cv.VideoCapture('./Clips/Deceptive/trial_lie_056.mp4')
-#     # ref_img_path = './trial_056.jpg'
-#     # ref_image = cv.imread(ref_img_path)
-#     detector = FaceDetector()
-
-#     frame_id=0
-
-#     while True:
-#         ret, frame = cap.read()
-
-#         frame_id+=1
-#         if not ret:
-#             print('End of video stream')
-#             break
-        
-#         result = detector.people_finder(frame)
-        
-#         if result==True:
-#             print(f'We have more than 1 people in frame {frame_id} in video {file}')
-        
-#         # processed_frame = detector.detect_faces(frame, frame_id, ref_img_path)
-
-#         # if processed_frame is not None:
-#         #     cv.imshow('Frame with faces', processed_frame)
-        
-#         # if cv.waitKey(1) & 0xFF == ord('q'):
-#         #     break
-                
-#     cap.release()
-#     cv.destroyAllWindows()
-
-# if __name__ == '__main__':
-
-#     deceptive_vid = './Clips/Deceptive'
-#     truthful_vid = './Clips/Truthful'
-
-#     for file in os.listdir(deceptive_vid):
-#         path_to_vid = os.path.join(deceptive_vid, file)
-#         cap = cv.VideoCapture(path_to_vid)
-#         preprocess_video(cap, file)
-
-
-
-# # print(cap.get(cv.CAP_PROP_FRAME_COUNT))
-# # print(cap.get(cv.CAP_PROP_FRAME_HEIGHT))
-# # print(cap.get(cv.CAP_PROP_FRAME_WIDTH))
-# # print(cap.get(cv.CAP_PROP_FPS))
-
 import cv2 as cv
 import os
+from tqdm import tqdm
 from face_recognition.detect_faces import FaceDetector
 
-def preprocess_video(video_path, file):
-    """Checks if more than one person appears in any frame of the video."""
-    
-    cap = cv.VideoCapture(video_path)
-    detector = FaceDetector()
-    frame_id = 0
+# Define input and output directories
+INPUT_DIR = "./Clips/"
+OUTPUT_DIR = "./ProcessedFaces/"
+os.makedirs(OUTPUT_DIR, exist_ok=True)
 
-    while True:
-        ret, frame = cap.read()
-        if not ret:
-            print(f'End of video: {file}')
-            break
+# Initialize the face detector
+detector = FaceDetector()
 
-        frame_id += 1
-        result = detector.people_finder(frame)
-        
-        if result:  # Assuming people_finder() returns True when more than one person is detected
-            print(f'More than 1 person detected in frame {frame_id} of video {file}')
+# Process each video in Deceptive and Truthful folders
+for category in ["Deceptive", "Truthful"]:
+    input_path = os.path.join(INPUT_DIR, category)
+    output_path = os.path.join(OUTPUT_DIR, category)
+    os.makedirs(output_path, exist_ok=True)
 
-    cap.release()
-    cv.destroyAllWindows()
+    for video_file in os.listdir(input_path):
+        if not video_file.endswith(".mp4"):
+            continue  # Skip non-video files
 
+        video_path = os.path.join(input_path, video_file)
+        video_name = os.path.splitext(video_file)[0]
+        video_output_dir = os.path.join(output_path, video_name)
+        os.makedirs(video_output_dir, exist_ok=True)
 
-import os
+        print(f"\n🔄 Processing: {video_file}...")
 
-if __name__ == '__main__':
-    deceptive_vid = './Clips/Deceptive'
-    truthful_vid = './Clips/Truthful'
-    start_file = "trial_lie_005.mp4"  # Define the file to start from
-    start_processing = False  # Flag to track when to start processing
+        # Open the video
+        cap = cv.VideoCapture(video_path)
+        total_frames = int(cap.get(cv.CAP_PROP_FRAME_COUNT))  # Get total number of frames
 
-    # Process deceptive videos
-    for file in sorted(os.listdir(deceptive_vid)):  # Ensure sorted order
-        if file == start_file:
-            start_processing = True  # Set flag when reaching the target file
-        
-        if not start_processing:
-            continue  # Skip files until reaching 'trial_lie_005.mp4'
+        frame_id = 0
 
-        path_to_vid = os.path.join(deceptive_vid, file)
-        preprocess_video(path_to_vid, file)  # Call your function
+        # Progress bar for frame processing
+        with tqdm(total=total_frames, desc=f"⏳ {video_file}", unit="frame") as pbar:
+            while cap.isOpened():
+                ret, frame = cap.read()
+                if not ret:
+                    break  # End of video
 
+                # Detect and crop the largest face
+                face_crop = detector.detect_largest_face(frame)
 
-    # Process truthful videos
-    # for file in os.listdir(truthful_vid):
-    #     if file.endswith(".mp4"):
-    #         path_to_vid = os.path.join(truthful_vid, file)
-    #         preprocess_video(path_to_vid, file)
+                if face_crop is not None and face_crop.size > 0:  # ✅ Ensure valid face before saving
+                    frame_filename = os.path.join(video_output_dir, f"frame_{frame_id:04d}.jpg")
+                    cv.imwrite(frame_filename, face_crop)  # ✅ Save cropped face instead of full frame
+
+                frame_id += 1
+                pbar.update(1)  # Update progress bar
+
+        cap.release()
+
+print("\n✅ Processing complete. Faces saved in:", OUTPUT_DIR)

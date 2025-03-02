@@ -2,3 +2,6 @@ Clips/
 Annotation/
 Transcription/
 .venv/
+
+utils.py
+test.py

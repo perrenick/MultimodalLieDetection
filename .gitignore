@@ -1,26 +1,5 @@
 Clips/
 Annotation/
 Transcription/
-venv/
 
-# Ignore the virtual environment directory
-venv3.9/
-
-# Other files and directories to ignore
-*.pyc
-__pycache__/
-*.pyo
-*.pyd
-.Python
-*.db
-*.sqlite3
-*.log
-*.pot
-*.mo
-*.swp
-.DS_Store
-*.sublime-workspace
-*.sublime-project
-
-utils.py
 test.py

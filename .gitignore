@@ -1,7 +1,12 @@
 Clips/
 Annotation/
 Transcription/
+ProcessedFaces/
+Audio/
+AudioSegments/
 .venv/
 
 utils.py
 test.py
+
+emotion_predictions.csv

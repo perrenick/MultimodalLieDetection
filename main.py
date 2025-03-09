@@ -6,6 +6,7 @@ from face_recognition.detect_faces import FaceDetector
 from face_recognition.emotion_recognition import analyze_emotion
 from audio_recognition.audio_processing import process_all_videos
 from audio_recognition.audio_segmentation import process_all_audio
+from audio_recognition.denoise_audio import denoise_all_segments
 
 # Define input and output directories
 INPUT_DIR = "./Clips/"
@@ -105,5 +106,7 @@ os.makedirs(OUTPUT_DIR, exist_ok=True)
 # process_all_videos()
 # print("\n🎉 Audio extraction complete. WAV files saved in ./Audio/")
 
-process_all_audio()
-print("\n🎉 Audio segmentation complete! Chunks saved in ./AudioSegments/")
+# process_all_audio()
+# print("\n🎉 Audio segmentation complete! Chunks saved in ./AudioSegments/")
+
+denoise_all_segments()

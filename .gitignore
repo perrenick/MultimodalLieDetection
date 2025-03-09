@@ -4,6 +4,7 @@ Transcription/
 ProcessedFaces/
 Audio/
 AudioSegments/
+AudioSegmentsDenoised/
 .venv/
 
 utils.py

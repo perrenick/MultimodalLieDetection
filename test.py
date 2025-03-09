@@ -44,14 +44,21 @@
 
 # print(df.head())
 
-from pydub import AudioSegment
-from pydub.playback import play
+import os
+import librosa
+import soundfile as sf
+import noisereduce as nr
 
-path = './Audio/Deceptive/trial_lie_001.wav'
-try:
-    wav_file = AudioSegment.from_wav(path)
-    print("Το αρχείο φορτώθηκε με επιτυχία!")
-except Exception as e:
-    print(f"Σφάλμα κατά τη φόρτωση του αρχείου: {e}")
+input_path = './Audio/Deceptive/trial_lie_007.wav'
+output_path = './Audio_Test'
+y, sr = librosa.load(input_path, sr=None)
 
-play(wav_file)
+os.makedirs(output_path, exist_ok=True)
+# Apply noise reduction.
+# noisereduce automatically estimates noise from the audio signal.
+reduced_noise = nr.reduce_noise(y=y, sr=sr)
+
+output_filename = os.path.join(output_path, 'trial_lie_007_denoised.wav')
+
+# Write to disk
+sf.write(output_filename, reduced_noise, sr)

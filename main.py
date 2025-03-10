@@ -7,6 +7,8 @@ from face_recognition.emotion_recognition import analyze_emotion
 from audio_recognition.audio_processing import process_all_videos
 from audio_recognition.audio_segmentation import process_all_audio
 from audio_recognition.denoise_audio import denoise_all_segments
+from audio_recognition.extract_opensmile import process_all_chunks
+from audio_recognition.merge_chunks import merge_all_chunks
 
 # Define input and output directories
 INPUT_DIR = "./Clips/"
@@ -109,4 +111,8 @@ os.makedirs(OUTPUT_DIR, exist_ok=True)
 # process_all_audio()
 # print("\n🎉 Audio segmentation complete! Chunks saved in ./AudioSegments/")
 
-denoise_all_segments()
+# denoise_all_segments()
+
+# process_all_chunks()
+
+merge_all_chunks()

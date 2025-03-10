@@ -5,9 +5,12 @@ ProcessedFaces/
 Audio/
 AudioSegments/
 AudioSegmentsDenoised/
+AudioFeatures/
 .venv/
 
 utils.py
 test.py
 
 emotion_predictions.csv
+true
+merged_audio_features.csv

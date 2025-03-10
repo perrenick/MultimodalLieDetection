@@ -44,21 +44,42 @@
 
 # print(df.head())
 
-import os
-import librosa
-import soundfile as sf
-import noisereduce as nr
+# import os
+# import librosa
+# import soundfile as sf
+# import noisereduce as nr
 
-input_path = './Audio/Deceptive/trial_lie_007.wav'
-output_path = './Audio_Test'
-y, sr = librosa.load(input_path, sr=None)
+# input_path = './Audio/Deceptive/trial_lie_007.wav'
+# output_path = './Audio_Test'
+# y, sr = librosa.load(input_path, sr=None)
 
-os.makedirs(output_path, exist_ok=True)
-# Apply noise reduction.
-# noisereduce automatically estimates noise from the audio signal.
-reduced_noise = nr.reduce_noise(y=y, sr=sr)
+# os.makedirs(output_path, exist_ok=True)
+# # Apply noise reduction.
+# # noisereduce automatically estimates noise from the audio signal.
+# reduced_noise = nr.reduce_noise(y=y, sr=sr)
 
-output_filename = os.path.join(output_path, 'trial_lie_007_denoised.wav')
+# output_filename = os.path.join(output_path, 'trial_lie_007_denoised.wav')
 
-# Write to disk
-sf.write(output_filename, reduced_noise, sr)
+# # Write to disk
+# sf.write(output_filename, reduced_noise, sr)
+
+import pandas as pd
+
+# Path to the CSV file
+# csv_file = "./AudioFeatures/Deceptive/trial_lie_001/chunk_0000.csv"
+
+# Find where @data starts
+# data_start = next(i for i, line in enumerate(lines) if "@data" in line) + 1
+
+# # Read only the data part into a DataFrame
+# df = pd.read_csv(csv_file, skiprows=data_start, header=None, sep=",")
+
+# # Print first rows of the numerical data
+# print(df.columns())
+
+csv_file = './merged_audio_features.csv'
+
+df = pd.read_csv(csv_file)
+
+print(df[50:150])
+

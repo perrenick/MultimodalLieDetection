@@ -77,9 +77,67 @@ import pandas as pd
 # # Print first rows of the numerical data
 # print(df.columns())
 
-csv_file = './merged_audio_features.csv'
+import os
+import pandas as pd
+from PreTrainedAudioClassifier.parse_cremad import make_dataframe
 
-df = pd.read_csv(csv_file)
+# from audio_recognition.denoise_audio import denoise_audio_file
+# CREMAD_DIR = './AudioWAV_CREMAD'
+# OUTPUT_DIR = './AudioWAV_Denoised'
 
-print(df[50:150])
+# data_list = []
+
+# def denoise_cremad_audio():
+
+#     os.makedirs(OUTPUT_DIR, exist_ok=True)
+
+#     for filename in os.listdir(CREMAD_DIR):
+#         audio_input_path = os.path.join(CREMAD_DIR, filename)
+#         audio_output_path = os.path.join(OUTPUT_DIR,filename)
+        
+#         print(f"\n🔈 Denoising segments: {filename}")
+#         denoise_audio_file(audio_input_path,audio_output_path)
+
+# # denoise_cremad_audio()
+
+# for filename in os.listdir(OUTPUT_DIR):
+#     if filename.endswith('.wav'):
+#         parts = filename.split('_')
+#         emotion_label = parts[2]
+
+#         full_path = os.path.join(OUTPUT_DIR, filename)
+#         data_list.append([full_path, emotion_label])
+
+# df = pd.DataFrame(data_list, columns=["filepath", "emotion_label"])
+# print(df.head())
+
+df_labels = make_dataframe('./AudioWAV_Denoised')
+df_features = pd.read_csv('merged_audio_wav_features.csv')
+
+# 1. Αφαίρεση της στήλης "name_field" που περιέχει "unknown"
+df_features.drop(columns=["name_field"], inplace=True)
+
+# 2. Αφαίρεση των στηλών που περιέχουν NaN τιμές
+df_features.dropna(axis=1, inplace=True)
+
+# 3. Δημιουργία mapping για να μετατρέψουμε το "video_name" ώστε να ταιριάζει με το "filename"
+df_labels["filename"] = df_labels["filepath"].apply(lambda x: x.split("/")[-1].replace(".wav", ".csv"))
+
+# Αντιστοίχιση των πρώτων N video_names στα ονόματα αρχείων των labels
+mapping = {str(i) + ".csv": filename for i, filename in enumerate(df_labels["filename"])}
+
+# Αντικατάσταση των ονομάτων στο df_features σύμφωνα με το mapping
+df_features["video_name"] = df_features["video_name"].map(mapping)
+
+# 4. Συγχώνευση των δύο DataFrames
+df_merged = df_features.merge(df_labels, left_on="video_name", right_on="filename", how="inner")
+
+# 5. Αφαίρεση της στήλης "filename" αφού δεν χρειάζεται πλέον
+df_merged.drop(columns=["filename"], inplace=True)
+
+# 6. Αποθήκευση του τελικού DataFrame (αν χρειάζεται)
+df_merged.to_csv("merged_data.csv", index=False)
+
+# Προβολή των πρώτων γραμμών του τελικού DataFrame
+print(df_merged.head())
 

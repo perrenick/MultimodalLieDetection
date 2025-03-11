@@ -6,11 +6,17 @@ Audio/
 AudioSegments/
 AudioSegmentsDenoised/
 AudioFeatures/
+AudioWAV_CREMAD/
+AudioWAV_Denoised/
+AudioWAV_Features/
+
 .venv/
 
 utils.py
 test.py
 
 emotion_predictions.csv
+merged_data.csv
+merged_audio_wav_features.csv
 true
 merged_audio_features.csv

@@ -97,6 +97,7 @@ def merge_all_chunks():
                         row_dict[f"feat_{i}"] = val
                     
                     rows.append(row_dict)
+                    pbar.update(1)
             
     
     # Convert the list of dicts to a DataFrame

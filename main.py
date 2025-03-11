@@ -9,6 +9,8 @@ from audio_recognition.audio_segmentation import process_all_audio
 from audio_recognition.denoise_audio import denoise_all_segments
 from audio_recognition.extract_opensmile import process_all_chunks
 from audio_recognition.merge_chunks import merge_all_chunks
+from PreTrainedAudioClassifier.cremad_opensmile import process_all_videos_crema
+from PreTrainedAudioClassifier.merge_cremad import merge_cremad
 
 # Define input and output directories
 INPUT_DIR = "./Clips/"
@@ -115,4 +117,8 @@ os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 # process_all_chunks()
 
-merge_all_chunks()
+# merge_all_chunks()
+
+# process_all_videos_crema()
+
+merge_cremad()
